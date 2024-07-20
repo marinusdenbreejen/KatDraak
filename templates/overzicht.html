@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="icon" type="image/png"  href="static/Favicon.png">
+    <link rel="apple-touch-icon" type="image/png"  href="static/Favicon.png">
+    <meta charset="UTF-8">
+    <title>Admin Timer, Kat&Hond 2</title>
+    <link rel="stylesheet" href="static/style.css"> <!-- Link to your CSS file -->
+    
+    <script src="https://cdn.socket.io/4.3.2/socket.io.min.js"></script>
+    <script src="static/script.js" defer></script> <!-- Link to your JavaScript file -->
+
+</head>
+<body>
+    <div class="card">
+        <h1 class="header">Katten en Honden Teller 2</h1>
+        
+        <div class="label">Florentine</div>
+        <div class="container" id="angryCatsContainer"></div>
+
+        <button class="btn" id="incrementAngryCatButton">Kat erbij</button>
+        <button class="btn" id="resetAngryCatButton">Reset katten</button>
+
+        <div class="container" id="niceCatsContainer"></div>
+        <button class="btn" id="incrementNiceCatButton">Lief poesje erbij</button>
+        <button class="btn" id="resetNiceCatButton">Reset lieve poesjes</button>
+        
+        
+        <div class="label">Pieter</div>
+        <div class="container" id="angryDogsContainer"></div>
+        <button class="btn" id="incrementAngryDogButton">Hond erbij</button>
+        <button class="btn" id="resetAngryDogButton">Reset Honden</button>
+
+        <div class="container" id="niceDogsContainer"></div>
+        <button class="btn" id="incrementNiceDogButton">Lief Puppy erbij</button>
+        <button class="btn" id="resetNiceDogButton">Reset Lieve Puppies</button>
+        
+
+        
+    </div>
+
+    <div class="card">
+        <h2>Timer Instellingen</h2>
+        <div class="container">
+            <input type="number" id="timerMinutesInput" placeholder="Minuten" min="1">
+            <button class="btn" id="setTimerButton" >Timer Instellen</button>
+        </div>
+        <P></P>
+        <div class="container">
+            <button class="btn" id="startTimerButton">Start</button>
+            <button class="btn" id="pauseTimerButton">Pauze</button>
+            <button class="btn" id="resetTimerButton">Reset</button>
+        </div>
+    </div>
+    
+
+</body>
+</html>
