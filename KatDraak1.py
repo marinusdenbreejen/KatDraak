@@ -14,7 +14,7 @@ logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
 app = Flask(__name__)
-socketio = SocketIO(app, async_mode='gevent')
+socketio = SocketIO(app)  # Default async_mode is threading
 
 # Needed for session management and flashing messages
 app.secret_key = 'hond-kat-draak'
