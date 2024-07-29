@@ -14,30 +14,28 @@ logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
 app = Flask(__name__)
-socketio = SocketIO(app)  # Default async_mode is threading
+socketio = SocketIO(app, async_mode='eventlet')  # Use eventlet for async operations
 
 # Needed for session management and flashing messages
 app.secret_key = 'hond-kat-draak'
+app.config['SESSION_TYPE'] = 'filesystem'  # Use filesystem for session management
 
 # Initialize values
 values = {"cat": 0, "dog": 0, "niceCat": 0, "niceDog": 0, "timer": 0, "timer_status": "paused"}
 
 def reset_values():
+    logging.info("Reset thread started")
     while True:
         now = datetime.now().time()
         if now >= time(18, 0):  # Reset at 18:00
+            logging.info("Resetting values at 18:00")
             values["cat"] = 0
             values["dog"] = 0
+            values["niceCat"] = 0
+            values["niceDog"] = 0
             tm.sleep(86400)  # Sleep for a day
-        tm.sleep(60)  # Check every minute
-
-# Start the reset thread
-reset_thread = threading.Thread(target=reset_values)
-reset_thread.start()
-
-########################################################################################
-#   Timer functionality
-########################################################################################
+        else:
+            tm.sleep(60)  # Check every minute
 
 @socketio.on('set_timer')
 def handle_set_timer(data):
@@ -71,10 +69,6 @@ def handle_control_timer(data):
     else:
         logging.error("Invalid timer control action received")
 
-########################################################################################
-#   Manage Cat and Dogs (now only angry, later also nice)
-########################################################################################
-
 @socketio.on('increment_count')
 def handle_increment_count(data):
     animal = data['animal']
@@ -95,10 +89,6 @@ def handle_reset_count(data):
 def handle_request_status():
     emit('counts_update', {key: values[key] for key in ['cat', 'dog', 'niceCat', 'niceDog']})
     emit('timer_update', {'timer': values["timer"], 'status': values["timer_status"]})
-
-########################################################################################
-#   Webserver
-########################################################################################
 
 @app.route('/display')
 def display():
@@ -128,4 +118,8 @@ def index():
     return render_template('overzicht.html')
 
 if __name__ == '__main__':
+    logging.info("Starting the Flask-SocketIO server")
+    reset_thread = threading.Thread(target=reset_values)
+    reset_thread.daemon = True  # Make the thread a daemon thread
+    reset_thread.start()
     socketio.run(app, host='0.0.0.0', port=8080)
