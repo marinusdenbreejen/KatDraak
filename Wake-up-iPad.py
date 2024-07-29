@@ -7,17 +7,23 @@ from pathlib import Path
 httpx_client = httpx.Client(http2=True)
 
 APNS_URL = "https://api.sandbox.push.apple.com:443/3/device/"
-BUNDLE_ID = "mhc.wakeupIPAD"
+BUNDLE_ID = "mhc.wakeupOldiPad"
 AUTH_KEY_PATH = "key/AuthKey_NWUX9JTZGK.p8"
 AUTH_KEY_ID = "NWUX9JTZGK"
 TEAM_ID = "GN459M9C63"
-DEVICE_TOKEN = "2e2fbc37951f42a71fd45cb0d056d3514aa4da3f3c004d30f6fdb69ed01a70e6"
+#new iPad 
+#DEVICE_TOKEN = "2e2fbc37951f42a71fd45cb0d056d3514aa4da3f3c004d30f6fdb69ed01a70e6"
+DEVICE_TOKEN = "887c2c8fc469f598602f10584cc1c2dda80e808e987601f2fd72a7a09742293f"
+
 
 payload = {
     "aps": {
-        "alert": "Hello, wakeupIPAD!",
+        "alert": {
+            "title": "Wake Up!",
+            "body": "It's time to wake up and check your iPad."
+        },
         "badge": 1,
-        "sound": "default",
+        "sound": "default"
     }
 }
 
