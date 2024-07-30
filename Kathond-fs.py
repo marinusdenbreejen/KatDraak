@@ -4,6 +4,7 @@ import threading
 from datetime import datetime, time
 import time as tm
 import logging
+from flask_sock import Sock
 
 ########################################################################################
 #   Initialization
@@ -15,6 +16,7 @@ logging.basicConfig(level=logging.INFO,
 
 app = Flask(__name__)
 socketio = SocketIO(app, async_mode='gevent')  # Use Gevent instead of Eventlet
+sock = Sock(app)  # Initialize flask-sock
 
 # Needed for session management and flashing messages
 app.secret_key = 'hond-kat-draak'
@@ -135,4 +137,4 @@ def index():
 
 if __name__ == '__main__':
     logging.info("Starting the Flask-SocketIO server")
-    socketio.run(app, host='0.0.0.0', port=8080)
+    socketio.run(app, host='0.0.0.0', port=8081)
