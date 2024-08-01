@@ -1,9 +1,12 @@
 from flask import Flask, jsonify, render_template, request, redirect, flash, session, url_for
 from flask_socketio import SocketIO, emit
 import threading
-from datetime import datetime, time
+from datetime import datetime, time as dt_time, timedelta
 import time as tm
 import logging
+import socket
+from WakeUpIPAD import send_notification  # Import the send_notification function
+
 
 ########################################################################################
 #   Initialization
@@ -20,13 +23,23 @@ socketio = SocketIO(app, async_mode='gevent')  # Use Gevent instead of Eventlet
 app.secret_key = 'hond-kat-draak'
 
 # Initialize values
-values = {"cat": 0, "dog": 0, "niceCat": 0, "niceDog": 0, "timer": 0, "timer_status": "paused"}
+values = {
+    "cat": 0, 
+    "dog": 0, 
+    "niceCat": 0, 
+    "niceDog": 0, 
+    "timer": 0, 
+    "timer_status": "paused",
+    "elapsed_seconds": 0,
+    "start_time": None,
+    "paused_duration": 0
+}
 
 def reset_values():
     logging.info("Reset thread started")
     while True:
         now = datetime.now().time()
-        if now >= time(18, 0):  # Reset at 18:00
+        if now >= dt_time(18, 0):  # Reset at 18:00
             logging.info("Resetting values at 18:00")
             values["cat"] = 0
             values["dog"] = 0
@@ -45,40 +58,91 @@ reset_thread.start()
 #   Timer functionality
 ########################################################################################
 
+def update_elapsed_time():
+    if values["timer_status"] == "running":
+        now = datetime.now()
+        if values["start_time"]:
+            elapsed = now - values["start_time"]
+            values["elapsed_seconds"] = round(values["paused_duration"] + elapsed.total_seconds())
+            logging.info(f"Elapsed seconds: {values['elapsed_seconds']}")
+            if values["elapsed_seconds"] >= (values["timer"] * 60):  # timer value is in minutes
+                values["timer_status"] = "completed"
+                logging.info("Timer completed")
+        
+        socketio.emit('timer_update', {
+            'timer': values["timer"], 
+            'status': values["timer_status"], 
+            'elapsed_seconds': values["elapsed_seconds"]
+        }, broadcast=True)
+
 @socketio.on('set_timer')
 def handle_set_timer(data):
     seconds = data.get('seconds', 0)
     values["timer"] = seconds
     values["timer_status"] = "paused"
-    logging.info(f"Timer set to {seconds} seconds")
+    values["elapsed_seconds"] = 0
+    values["start_time"] = None
+    values["paused_duration"] = 0
+    logging.info(f"Timer set to {seconds} minutes")
     emit('timer_update', {
-         'timer': values["timer"], 'status': values["timer_status"]}, broadcast=True)
+        'timer': values["timer"], 
+        'status': values["timer_status"],
+        'elapsed_seconds': values["elapsed_seconds"]
+    }, broadcast=True)
 
 @socketio.on('get_timer')
 def handle_get_timer():
     emit('timer_update', {
-         'timer': values["timer"], 'status': values["timer_status"]})
+        'timer': values["timer"], 
+        'status': values["timer_status"],
+        'elapsed_seconds': values["elapsed_seconds"]
+    })
 
 @socketio.on('control_timer')
 def handle_control_timer(data):
     action = data.get('action', '').lower()
     if action in ['play', 'pause', 'reset']:
-        values["timer_status"] = action
         if action == 'reset':
+            values["timer_status"] = "paused"
             values["timer"] = 0
-            values["timer_status"] = "reset"
+            values["elapsed_seconds"] = 0
+            values["start_time"] = None
+            values["paused_duration"] = 0
+            logging.info("Timer reset")
         elif action == 'play':
             values["timer_status"] = "running"
+            if values["start_time"] is None:
+                values["start_time"] = datetime.now()
+            logging.info("Timer started")
         elif action == 'pause':
             values["timer_status"] = "paused"
-        logging.info(f"Timer {action} action received")
-        emit('timer_update', {
-             'timer': values["timer"], 'status': values["timer_status"]}, broadcast=True)
+            if values["start_time"]:
+                now = datetime.now()
+                elapsed = now - values["start_time"]
+                values["paused_duration"] += elapsed.total_seconds()
+                values["start_time"] = None
+            logging.info("Timer paused")
+        socketio.emit('timer_update', {
+            'timer': values["timer"], 
+            'status': values["timer_status"], 
+            'elapsed_seconds': values["elapsed_seconds"]
+        }, broadcast=True)
     else:
         logging.error("Invalid timer control action received")
 
+# Background thread to update elapsed time every second when the timer is running
+def elapsed_time_updater():
+    while True:
+        if values["timer_status"] == "running":
+            update_elapsed_time()
+        tm.sleep(1)
+
+elapsed_time_thread = threading.Thread(target=elapsed_time_updater)
+elapsed_time_thread.daemon = True
+elapsed_time_thread.start()
+
 ########################################################################################
-#   Manage Cat and Dogs (now only angry, later also nice)
+#   Manage Cat and Dogs (both angry and nice) and iPadButton (for remote wakeup)
 ########################################################################################
 
 @socketio.on('increment_count')
@@ -100,7 +164,23 @@ def handle_reset_count(data):
 @socketio.on('request_status')
 def handle_request_status():
     emit('counts_update', {key: values[key] for key in ['cat', 'dog', 'niceCat', 'niceDog']})
-    emit('timer_update', {'timer': values["timer"], 'status': values["timer_status"]})
+    emit('timer_update', {
+        'timer': values["timer"], 
+        'status': values["timer_status"], 
+        'elapsed_seconds': values["elapsed_seconds"]
+    })
+
+@socketio.on('ipad_action')
+def handle_ipad_action():
+    logging.info("iPad aanzetten button pressed")
+    send_notification()
+    tm.sleep(3)
+    emit('refresh_page', broadcast=True)
+
+@socketio.on('refresh_all_clients')
+def handle_refresh_all_clients():
+    logging.info("Sending refresh command to all clients")
+    emit('refresh_page', broadcast=True)
 
 ########################################################################################
 #   Webserver
@@ -109,6 +189,10 @@ def handle_request_status():
 @app.route('/display')
 def display():
     return render_template('display.html')
+
+@app.route('/timer')
+def timer():
+    return render_template('timeTimer.html')
 
 @app.route('/values', methods=['GET'])
 def get_values():
@@ -134,5 +218,9 @@ def index():
     return render_template('overzicht.html')
 
 if __name__ == '__main__':
+    # Get the host IP address
+    hostname = socket.gethostname()
+    host_ip = socket.gethostbyname(hostname)
+    logging.info(f"Host IP address: {host_ip}")
     logging.info("Starting the Flask-SocketIO server")
     socketio.run(app, host='0.0.0.0', port=8080)

@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="static/style.css"> <!-- Link to your CSS file -->
     
     <script src="https://cdn.socket.io/4.3.2/socket.io.min.js"></script>
+    <script src="static/TimeTimer/timeTimer.js"></script> 
     <script src="static/script.js" defer></script> <!-- Link to your JavaScript file -->
 
 </head>
@@ -51,6 +52,20 @@
             <button class="btn" id="startTimerButton">Start</button>
             <button class="btn" id="pauseTimerButton">Pauze</button>
             <button class="btn" id="resetTimerButton">Reset</button>
+        </div>
+    </div>
+
+    <div class="card">
+        <canvas id="timerCanvas" width="600" height="600"></canvas>
+        
+    </div>
+
+
+    <div class="card">
+        <h2>Akties</h2>
+        <div class="container">
+            <button class="btn" id="ipadButton">iPad aanzetten</button>
+            <button class="btn" id="refreshButton">Refresh All Clients</button>
         </div>
     </div>
     

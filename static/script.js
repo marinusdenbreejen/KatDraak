@@ -123,6 +123,21 @@ document.addEventListener('DOMContentLoaded', function() {
         socket.emit('control_timer', { action: action });
     }
 
+    // Add event listener for the new iPad button
+    safelyAddEventListener('ipadButton', 'click', function() {
+        socket.emit('ipad_action');
+    });
+
+    // Refresh button functionality
+    safelyAddEventListener('refreshButton', 'click', function() {
+        socket.emit('refresh_all_clients');
+    });
+
+    // Listen for refresh event from the server
+    socket.on('refresh_page', function() {
+        location.reload();
+    });
+
 
 
 

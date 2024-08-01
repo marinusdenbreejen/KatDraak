@@ -1,0 +1,137 @@
+/* Existing styles */
+body {
+    font-family: "Roboto", sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    height: auto;
+  }
+  .card {
+    border-radius: 15px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    background-color: white;
+    padding: 20px;
+    margin: 2%;
+    width: 98%;
+    max-width: calc(100% - 4%);
+    /* height: 85vh; */
+  }
+  .container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+  .item {
+    margin: 5px;
+    flex: 0 0 calc(15% - 10px);
+    max-width: calc(15% - 10px);
+  }
+  .header {
+    text-align: center;
+    color: #333;
+  }
+  .label {
+    font-weight: bold;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    color: #555;
+    font-size: 24px;
+  }
+  
+  @media (max-width: 600px) {
+    body {
+      flex-direction: column; /* Stack .card elements vertically */
+      align-items: center; /* Center-align the cards for aesthetic purposes */
+    }
+  
+    .card {
+      width: 90%; /* Adjust the width as needed for narrow screens */
+      height: auto; /* Adjust height to be automatic based on content */
+      margin: 10px 0; /* Add some vertical margin for separation */
+    }
+  
+    .item {
+      flex: 0 0 calc(20% - 10px);
+      max-width: calc(20% - 10px);
+    }
+  }
+  
+  /* New styles for login layout enhancements */
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .form-group label,
+  .form-group input {
+    width: 80%; /* Adjust input width */
+    margin-bottom: 10px;
+  }
+  
+  .btn {
+    margin-bottom: 10px;
+    margin-right: 10px;
+    padding: 8px;
+    font-size: 18px;
+    border: 1px;
+    border-radius: 4px;
+    background-color: #6200ea; /* Material Design purple */
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .form-group label {
+    color: #333; /* Material Design text color for labels */
+    font-size: 16px; /* Adjusted font size for readability */
+    position: absolute; /* Position the label inside the input */
+    pointer-events: none; /* Allows click to pass through to the input */
+    left: 12px;
+    top: 15px; /* Adjust vertical position to align with the textbox */
+    transition: all 0.2s ease; /* Smooth transition for when label moves (if implementing floating label) */
+  }
+  
+  input {
+    font-size: 18px; /* Consistent font size with label */
+    padding: 8px; /* Padding to make room for label inside the textbox */
+    margin-right: 10px;
+    width: 30%; /* Ensure the input stretches to the width of its parent */
+    border: 1px solid #ccc; /* Material Design light border */
+    border-radius: 4px; /* Slightly rounded corners for the input */
+    transition: border-color 0.2s; /* Smooth transition for border color */
+    border-color: #6200ea; /* Material Design purple, indicating focus */
+    outline: none; /* Remove default focus outline */
+  }
+  
+  .form-group input[type="password"]:focus + label {
+    color: #6200ea; /* Change label color to indicate the textbox is active */
+    /* Implement additional transformations if using floating labels */
+  }
+  
+  .error-message {
+    color: red; /* Error message color */
+    width: 80%; /* Match the width of the input field */
+    margin-top: 5px; /* Spacing between the input field and the error message */
+    text-align: left; /* Align the text to the left */
+    display: none; /* Hide by default */
+  }
+  
+  .form-group input[type="password"]:invalid + .error-message {
+    display: block; /* Show when the input is invalid */
+  }
+  
+  canvas {
+    width: 100%; /* Make the canvas fill the available width */
+    height: auto; /* Adjust height automatically */
+    max-width: 100%; /* Ensure it does not overflow its container */
+    max-height: 100%;
+    border: 1px solid #ccc; /* Optional: shows canvas boundaries */
+    border-radius: 4px; /* Slightly rounded corners for the input */
+  }
+  

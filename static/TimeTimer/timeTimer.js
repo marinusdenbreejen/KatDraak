@@ -11,13 +11,20 @@ document.addEventListener('DOMContentLoaded', function() {
     let timerStatus = 'paused';
     let pastSeconds = 0;
     let interval;
+
+    // Initial interval setup to start the timer immediately on page load
+    setInterval(() => {
+        if (timerStatus === 'running') {
+            pastSeconds++;    
+        }
+        drawClock(pastSeconds, totalSeconds);
+    }, 1000);
     
 
 
     // Initialize a WebSocket connection
     const socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
     socket.emit('request_status');
-
 
     alarmSound.addEventListener('canplaythrough', event => {
         console.log('Audio is ready to play');
@@ -37,35 +44,18 @@ document.addEventListener('DOMContentLoaded', function() {
         // Update your timer based on received data
         timerStatus = data.status;
         totalSeconds = data.timer * 60;
-        drawClock(pastSeconds, totalSeconds); // You might need to implement this to update your UI
-        fetchTimerStatus();
+        if (timerStatus == "paused") {
+            pastSeconds = data.elapsed_seconds; // always update when paused
+        }
+
+        if (Math.abs(data.elapsed_seconds - pastSeconds) > 2) {
+            pastSeconds = data.elapsed_seconds;
+        }
+        drawClock(pastSeconds, totalSeconds); 
     });
 
 
-    
-
-
-    function fetchTimerStatus() {
-
-        drawClock(pastSeconds, totalSeconds);
-
-
-        // Handle different timer statuses
-        if (timerStatus === 'running') {
-            clearInterval(interval);
-            interval = setInterval(updateTimer, 1000); // Start or restart the timer
-        } else if (timerStatus === 'paused') {
-            clearInterval(interval);
-        } else if (timerStatus === 'reset') {
-            clearInterval(interval);
-            pastSeconds = 0;
-            timerStatus = 'paused'; // Optionally reset the status to paused after a reset
-            drawClock(0, totalSeconds);
-            // No need to redraw the clock here as it's already done above if totalSeconds changed
-     
-        }
-    }
-
+  
 
     
     //////////////////////////////////////////////////////////////////////////////////
@@ -148,6 +138,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     function drawClock(pastSeconds, totalSeconds) {
+        console.log("Start Draw Clock");
         ctx.fillStyle = 'lightgray';
         ctx.fillRect(-radius, -radius, canvas.width, canvas.height);
 
@@ -171,6 +162,7 @@ document.addEventListener('DOMContentLoaded', function() {
         drawClockPositions(majorTicks,totalSeconds);  // Pass the number of major positions
         drawLines(minorTicks, majorTicks); // Pass both minor and major ticks
         drawTimeLeft();
+        console.log("End Draw Clock");
     }
     
     
@@ -227,7 +219,7 @@ document.addEventListener('DOMContentLoaded', function() {
     /////////////////////////////////////////////////////////////////////////////////
 
 
-   
+   /*
     function updateTimer() {
         if (timerStatus !== 'running') {
             clearInterval(interval);
@@ -250,6 +242,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
         drawClock(pastSeconds, totalSeconds);
     }
-    
+    */
    
 });

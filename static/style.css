@@ -9,9 +9,14 @@ body {
   align-items: flex-start;
   height: auto;
 }
+
+:root {
+  --shadow-rgb: 11, 20, 26; /* Updated shadow color */
+}
+
 .card {
-  border-radius: 15px;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  border-radius: 3px; /* Updated border-radius */
+  box-shadow: 0 17px 50px 0 rgba(var(--shadow-rgb), .19), 0 12px 15px 0 rgba(var(--shadow-rgb), .24); /* Updated shadow setup */
   background-color: white;
   padding: 20px;
   margin: 2%;
@@ -19,21 +24,25 @@ body {
   max-width: calc(100% - 4%);
   /* height: 85vh; */
 }
+
 .container {
   display: flex;
   align-items: center;
   justify-content: flex-start;
   flex-wrap: wrap;
 }
+
 .item {
   margin: 5px;
   flex: 0 0 calc(15% - 10px);
   max-width: calc(15% - 10px);
 }
+
 .header {
   text-align: center;
   color: #333;
 }
+
 .label {
   font-weight: bold;
   margin-top: 20px;
@@ -77,36 +86,29 @@ body {
 .btn {
   margin-bottom: 10px;
   margin-right: 10px;
-  padding: 8px;
+  padding: 10px 20px; /* Adjusted padding for uniform height */
   font-size: 18px;
-  border: 1px;
-  border-radius: 4px;
+  border: 1px solid transparent; /* Adjusted to use solid border */
+  border-radius: 30px; /* Rounded edges */
+  height: 40px; /* Ensures uniform height */
   background-color: #6200ea; /* Material Design purple */
   color: white;
   cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.form-group label {
-  color: #333; /* Material Design text color for labels */
-  font-size: 16px; /* Adjusted font size for readability */
-  position: absolute; /* Position the label inside the input */
-  pointer-events: none; /* Allows click to pass through to the input */
-  left: 12px;
-  top: 15px; /* Adjust vertical position to align with the textbox */
-  transition: all 0.2s ease; /* Smooth transition for when label moves (if implementing floating label) */
+  transition: background-color 0.3s, border-color 0.3s; /* Smooth transition for background and border */
 }
 
 input {
   font-size: 18px; /* Consistent font size with label */
-  padding: 8px; /* Padding to make room for label inside the textbox */
+  padding: 0 10px; /* Adjusted padding for uniform height */
   margin-right: 10px;
-  width: 30%; /* Ensure the input stretches to the width of its parent */
+  margin-bottom: 10px;
+  width: 150px; /* Fixed width */
   border: 1px solid #ccc; /* Material Design light border */
-  border-radius: 4px; /* Slightly rounded corners for the input */
+  border-radius: 30px; /* Rounded edges */
   transition: border-color 0.2s; /* Smooth transition for border color */
   border-color: #6200ea; /* Material Design purple, indicating focus */
   outline: none; /* Remove default focus outline */
+  height: 40px; /* Ensures uniform height */
 }
 
 .form-group input[type="password"]:focus + label {

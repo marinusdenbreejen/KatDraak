@@ -11,10 +11,7 @@ BUNDLE_ID = "mhc.wakeupOldiPad"
 AUTH_KEY_PATH = "key/AuthKey_NWUX9JTZGK.p8"
 AUTH_KEY_ID = "NWUX9JTZGK"
 TEAM_ID = "GN459M9C63"
-#new iPad 
-#DEVICE_TOKEN = "2e2fbc37951f42a71fd45cb0d056d3514aa4da3f3c004d30f6fdb69ed01a70e6"
 DEVICE_TOKEN = "887c2c8fc469f598602f10584cc1c2dda80e808e987601f2fd72a7a09742293f"
-
 
 payload = {
     "aps": {
@@ -38,7 +35,7 @@ def create_jwt():
     print("JWT Created")
     return token
 
-def send_notification(payload, device_token):
+def send_notification():
     headers = {
         "apns-expiration": "0",
         "apns-priority": "10",
@@ -49,7 +46,7 @@ def send_notification(payload, device_token):
     response = None  # Initialisatie van response
     try:
         response = httpx_client.post(
-            f"{APNS_URL}{device_token}",
+            f"{APNS_URL}{DEVICE_TOKEN}",
             json=payload,
             headers=headers,
             timeout=10.0,
@@ -66,4 +63,4 @@ def send_notification(payload, device_token):
     return response
 
 if __name__ == "__main__":
-    response = send_notification(payload, DEVICE_TOKEN)
+    response = send_notification()
