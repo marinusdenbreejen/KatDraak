@@ -5,12 +5,13 @@
 
 
 - [ ] timer geluid
-- [ ] timer op alle devices gelijk
-- [ ] timer ook op instelscherm
-- [ ] beloning vinkjes
+- [x] timer op alle devices gelijk
+- [x] timer ook op instelscherm
+- [ ] beloning vinkjes / presents
 
-### Execute:
+### onthouden:
 
-- gunicorn -w 1 -b 0.0.0.0:8080 KatHond:app
+- Install requirements: pip install -r requirements.txt 
+- 
 
 

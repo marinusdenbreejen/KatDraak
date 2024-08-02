@@ -2,16 +2,21 @@ import httpx
 import jwt
 import time
 from pathlib import Path
+from dotenv import load_dotenv
+import os
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Zorg ervoor dat httpx met HTTP/2 werkt
 httpx_client = httpx.Client(http2=True)
 
 APNS_URL = "https://api.sandbox.push.apple.com:443/3/device/"
-BUNDLE_ID = "mhc.wakeupOldiPad"
-AUTH_KEY_PATH = "key/AuthKey_NWUX9JTZGK.p8"
-AUTH_KEY_ID = "NWUX9JTZGK"
-TEAM_ID = "GN459M9C63"
-DEVICE_TOKEN = "887c2c8fc469f598602f10584cc1c2dda80e808e987601f2fd72a7a09742293f"
+BUNDLE_ID = os.getenv("BUNDLE_ID")
+AUTH_KEY_PATH = os.getenv("AUTH_KEY_PATH")
+AUTH_KEY_ID = os.getenv("AUTH_KEY_ID")
+TEAM_ID = os.getenv("TEAM_ID")
+DEVICE_TOKEN = os.getenv("DEVICE_TOKEN")
 
 payload = {
     "aps": {

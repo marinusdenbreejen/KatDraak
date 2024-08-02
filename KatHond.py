@@ -5,8 +5,12 @@ from datetime import datetime, time as dt_time, timedelta
 import time as tm
 import logging
 import socket
+from dotenv import load_dotenv
+import os
 from WakeUpIPAD import send_notification  # Import the send_notification function
 
+# Load environment variables from .env file
+load_dotenv()
 
 ########################################################################################
 #   Initialization
@@ -20,7 +24,7 @@ app = Flask(__name__)
 socketio = SocketIO(app, async_mode='gevent')  # Use Gevent instead of Eventlet
 
 # Needed for session management and flashing messages
-app.secret_key = 'hond-kat-draak'
+app.secret_key = os.getenv('FLASK_SESSION_KEY')
 
 # Initialize values
 values = {
@@ -198,7 +202,7 @@ def timer():
 def get_values():
     return jsonify(values)
 
-PASSWORD = "hond"
+PASSWORD = os.getenv('PASSWORD')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
