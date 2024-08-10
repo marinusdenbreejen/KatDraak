@@ -13,6 +13,7 @@
 
 ### onthouden:
 
+- activate Pyton virtual environment: source venv/bin/activate
 - Install requirements: pip install -r requirements.txt 
 - nieuwe versie: git pull
 - restart server: sudo systemctl restart kathond.service
