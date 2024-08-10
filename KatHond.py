@@ -28,10 +28,12 @@ app.secret_key = os.getenv('FLASK_SESSION_KEY')
 
 # Initialize values
 values = {
-    "cat": 0, 
-    "dog": 0, 
+    "angryCat": 0, 
+    "angryDog": 0, 
     "niceCat": 0, 
     "niceDog": 0, 
+    "kadoF": 0,
+    "kadoP" : 0,
     "timer": 0, 
     "timer_status": "paused",
     "elapsed_seconds": 0,
@@ -45,10 +47,8 @@ def reset_values():
         now = datetime.now().time()
         if now >= dt_time(18, 0):  # Reset at 18:00
             logging.info("Resetting values at 18:00")
-            values["cat"] = 0
-            values["dog"] = 0
-            values["niceCat"] = 0
-            values["niceDog"] = 0
+            values["angryCat"] = 0
+            values["angryDog"] = 0
             tm.sleep(86400)  # Sleep for a day
         else:
             tm.sleep(60)  # Check every minute
@@ -71,8 +71,8 @@ def update_elapsed_time():
             logging.info(f"Elapsed seconds: {values['elapsed_seconds']}")
             if values["elapsed_seconds"] >= (values["timer"] * 60):  # timer value is in minutes
                 values["timer_status"] = "completed"
-                logging.info("Timer completed")
-        
+                values["elapsed_seconds"] = (values["timer"] * 60)
+                logging.info("Timer completed")        
         socketio.emit('timer_update', {
             'timer': values["timer"], 
             'status': values["timer_status"], 
@@ -149,30 +149,28 @@ elapsed_time_thread.start()
 #   Manage Cat and Dogs (both angry and nice) and iPadButton (for remote wakeup)
 ########################################################################################
 
-@socketio.on('increment_count')
-def handle_increment_count(data):
-    animal = data['animal']
-    if animal in ['cat', 'dog', 'niceCat', 'niceDog']:
-        values[animal] += 1
-        logging.info(f"{animal} count incremented")
-        emit('counts_update', {key: values[key] for key in ['cat', 'dog', 'niceCat', 'niceDog']}, broadcast=True)
+@socketio.on('set_counter')
+def handle_set_counter(data):
+    name = data.get('name')
+    value = data.get('value')
+    if session.get('logged_in'):
+        logging.info(f"{name} count set to{value}")
+        if name in values and isinstance(value, int):
+            values[name] = value
+            emit('counts_update', {key: values[key] for key in values}, broadcast=True)
+  
 
-@socketio.on('reset_count')
-def handle_reset_count(data):
-    animal = data['animal']
-    if animal in ['cat', 'dog', 'niceCat', 'niceDog']:
-        values[animal] = 0
-        logging.info(f"{animal} count reset")
-        emit('counts_update', {key: values[key] for key in ['cat', 'dog', 'niceCat', 'niceDog']}, broadcast=True)
 
 @socketio.on('request_status')
 def handle_request_status():
-    emit('counts_update', {key: values[key] for key in ['cat', 'dog', 'niceCat', 'niceDog']})
+    emit('counts_update', {key: values[key] for key in values})
     emit('timer_update', {
         'timer': values["timer"], 
         'status': values["timer_status"], 
         'elapsed_seconds': values["elapsed_seconds"]
     })
+
+
 
 @socketio.on('ipad_action')
 def handle_ipad_action():

@@ -8,6 +8,8 @@
 - [x] timer op alle devices gelijk
 - [x] timer ook op instelscherm
 - [ ] beloning vinkjes / presents
+- [ ] op admin scherm, cards in 2 kolomen op breed scherm
+- [ ] UX verbeteringen: laat altijd 5 figuurtjes zien, maar maak de active in kleur, en de niet active heel licht. Zet het huidige figuurtje (meisje/jongen) boven de naam
 
 ### onthouden:
 

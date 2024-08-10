@@ -16,45 +16,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // Listen for custom events for cat, dog, niceCat, and niceDog count updates
     socket.on('counts_update', function(data) {
         console.log("Counts update received:", data);
-        // Process the incoming counts data for all animals
-        const { cat, dog, niceCat, niceDog } = data;
+        updateCountsAndImages(data);
+    });
+    
 
-        // Update images and counts for all received data
-        updateCountsAndImages(cat, dog, niceCat, niceDog);
-    });
-
-    // Increment and reset counts for animals
-    safelyAddEventListener('incrementAngryCatButton', 'click', function() {
-        socket.emit('increment_count', { animal: 'cat' });    
-    });
-    safelyAddEventListener('incrementAngryDogButton', 'click', function() {
-        socket.emit('increment_count', { animal: 'dog' });
-    });
-    safelyAddEventListener('resetAngryCatButton', 'click', function() {
-        socket.emit('reset_count', { animal: 'cat' });
-    });
-    safelyAddEventListener('resetAngryDogButton', 'click', function() {
-        socket.emit('reset_count', { animal: 'dog' });
-    });
-
-
-    // Extend the increment and reset event listeners to include niceCat and niceDog
-    safelyAddEventListener('incrementNiceCatButton', 'click', function() {
-        socket.emit('increment_count', { animal: 'niceCat' });
-    });
-    safelyAddEventListener('incrementNiceDogButton', 'click', function() {
-        socket.emit('increment_count', { animal: 'niceDog' });
-    });
-    safelyAddEventListener('resetNiceCatButton', 'click', function() {
-        socket.emit('reset_count', { animal: 'niceCat' });
-    });
-    safelyAddEventListener('resetNiceDogButton', 'click', function() {
-        socket.emit('reset_count', { animal: 'niceDog' });
-    });
-
-
-
-
+   
     // Timer control functionality
     safelyAddEventListener('setTimerButton', 'click', function() {
         const seconds = parseInt(document.getElementById('timerMinutesInput').value, 10);
@@ -72,26 +38,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Refactored function to update images based on new cat and dog counts
     // Adjusted function to handle new cat and dog counts, including niceCat and niceDog
-    function updateCountsAndImages(catCount, dogCount, niceCatCount, niceDogCount) {
-        // Ensure counts do not exceed 5 for each animal
-        catCount = Math.min(catCount, 5);
-        dogCount = Math.min(dogCount, 5);
-        niceCatCount = Math.min(niceCatCount, 5);
-        niceDogCount = Math.min(niceDogCount, 5);
-
-        // Determine the images to use for each animal
-        const catImage = catCount > 0 ? 'static/AngryCat.png' : 'static/Florentine.png';
-        const dogImage = dogCount > 0 ? 'static/AngryDog.png' : 'static/Pieter.png';
-        const niceCatImage = niceCatCount > 0 ? 'static/NiceCat.png' : 'static/Florentine.png'; // Assume you have a 'NiceCat.png'
-        const niceDogImage = niceDogCount > 0 ? 'static/NiceDog.png' : 'static/Pieter.png'; // Assume you have a 'NiceDog.png'
-
-        // Update images for each animal
-        updateImages('angryCatsContainer', catImage, Math.max(catCount, 1));
-        updateImages('angryDogsContainer', dogImage, Math.max(dogCount, 1));
-        updateImages('niceCatsContainer', niceCatImage, Math.max(niceCatCount, 1)); // Assume you have a 'niceCatsContainer'
-        updateImages('niceDogsContainer', niceDogImage, Math.max(niceDogCount, 1)); // Assume you have a 'niceDogsContainer'
+    function updateCountsAndImages(data) {
+        const FlorentineImage = 'static/Florentine.png';
+        const PieterImage = 'static/Pieter.png';
+        const catImage = 'static/AngryCat.png';
+        const dogImage = 'static/AngryDog.png';
+        const niceCatImage = 'static/NiceCat.png';
+        const niceDogImage = 'static/NiceDog.png';
+        const kadoImage = 'static/present_with_white_background.png';
+    
+        // Update images for each animal and kado
+        updateImages('angryCatsContainer', FlorentineImage, catImage, data.angryCat, "angryCat");
+        updateImages('angryDogsContainer', PieterImage, dogImage, data.angryDog, "angryDog");
+       
+        updateImages('niceCatsContainer', FlorentineImage, niceCatImage, data.niceCat, "niceCat");
+        updateImages('niceDogsContainer', PieterImage, niceDogImage, data.niceDog, "niceDog");
+    
+        updateImages('kadoPContainer', PieterImage, kadoImage, data.kadoP, "kadoP");
+        updateImages('kadoFContainer', FlorentineImage, kadoImage, data.kadoF, "kadoF");
     }
-
+    
+/*
     function updateImages(containerId, imageUrl, count) {
         const container = document.getElementById(containerId);
         // Clear existing images only if necessary (moved inside the condition in fetchAndUpdateImages)
@@ -103,6 +70,59 @@ document.addEventListener('DOMContentLoaded', function() {
             container.appendChild(img);
         }
     }
+*/
+
+/*
+function updateImages(containerId, startImageUrl, imageUrl, count,animal) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = ''; // Clear existing images
+    let img = document.createElement('img');
+    img.src = startImageUrl;
+    img.classList.add('item');
+    container.appendChild(img);
+
+    // Ensure there are always 5 images
+    for (let i = 0; i < 5; i++) {
+        let img = document.createElement('img');
+        img.src = imageUrl;
+        img.classList.add('item');
+        img.style.opacity = i < count ? '1' : '0.2'; // Fully visible if within count, otherwise semi-transparent
+        container.appendChild(img);
+    }
+}
+*/
+
+
+    function updateImages(containerId, startImageUrl, imageUrl, count, animal) {
+        const container = document.getElementById(containerId);
+        container.innerHTML = ''; // Clear existing images
+        
+        // Create and append the start image
+        let startImg = document.createElement('img');
+        startImg.src = startImageUrl;
+        startImg.classList.add('item');
+        startImg.addEventListener('click', function() {
+            setAnimalCount(animal, 0); // Set count to 0 on start image click
+        });
+        container.appendChild(startImg);
+
+        // Create and append the animal images
+        for (let i = 0; i < 5; i++) {
+            let img = document.createElement('img');
+            img.src = imageUrl;
+            img.classList.add('item');
+            img.style.opacity = i < count ? '1' : '0.2'; // Fully visible if within count, otherwise semi-transparent
+            img.addEventListener('click', function() {
+                setAnimalCount(animal, i + 1); // Set count to i+1 on image click
+            });
+            container.appendChild(img);
+        }
+    }
+
+    function setAnimalCount(animal, count) {
+        socket.emit('set_counter', { name: animal, value: count });
+    }
+    
 
 
 

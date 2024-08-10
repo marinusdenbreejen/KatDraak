@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Calculate the rotation based on the total number of lines
             ctx.rotate(i * (Math.PI * 2) / totalLines);
             ctx.beginPath();
-            ctx.moveTo(0, -radius * 0.74);
+            ctx.moveTo(0, -radius * 0.75);
             if (i % majorLineInterval === 0) {
                 // Draw major line
                 ctx.lineTo(0, -radius * 0.65);
@@ -139,15 +139,34 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function drawClock(pastSeconds, totalSeconds) {
         console.log("Start Draw Clock");
-        ctx.fillStyle = 'lightgray';
+        ctx.fillStyle = '#f5f5f5';
         ctx.fillRect(-radius, -radius, canvas.width, canvas.height);
 
         const endAngle = -(Math.PI / 2) - (Math.PI * 2 * (pastSeconds / totalSeconds));
 
+        // Set shadow properties
+        ctx.shadowColor = 'rgba(11, 20, 26, 0.24)';
+        ctx.shadowBlur = 15;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 12;
+
+
+        // Clockface
         ctx.beginPath();
         ctx.arc(0, 0, radius * 0.75, 0, Math.PI * 2);
         ctx.fillStyle = 'white';
         ctx.fill();
+
+        // Thin purple line around the clock
+        ctx.lineWidth = 1; // Set the thickness of the line
+        ctx.strokeStyle = 'gray'; // Material purple, the color of the line
+        ctx.stroke(); // Apply the stroke to the current path
+
+        // Reset shadow for other elements
+        ctx.shadowColor = 'rgba(0, 0, 0, 0)';
+        ctx.shadowBlur = 0;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 0;
 
         ctx.beginPath();
         ctx.moveTo(0, 0);
@@ -155,6 +174,8 @@ document.addEventListener('DOMContentLoaded', function() {
         ctx.closePath();
         ctx.fillStyle = 'red';
         ctx.fill();
+
+
 
         const { minorTicks, majorTicks } = calculateTicks(totalSeconds);
 
@@ -214,34 +235,6 @@ document.addEventListener('DOMContentLoaded', function() {
         return { minorTicks, majorTicks };
     }
 
-    //////////////////////////////////////////////////////////////////////////////////
-    // Timer functionality
-    /////////////////////////////////////////////////////////////////////////////////
-
-
-   /*
-    function updateTimer() {
-        if (timerStatus !== 'running') {
-            clearInterval(interval);
-            return;
-        }
     
-        // Increment pastSeconds only if it's less than totalSeconds
-        if (pastSeconds < totalSeconds) {
-            pastSeconds++;
-        }
-    
-        // Check if the timer has completed
-        if (pastSeconds >= totalSeconds) {
-            clearInterval(interval);
-            alarmSound.play();
-            timerStatus = 'completed';
-            // Optionally, ensure pastSeconds is not greater than totalSeconds
-            pastSeconds = totalSeconds; // This ensures pastSeconds is exactly equal to totalSeconds when the timer completes
-        }
-    
-        drawClock(pastSeconds, totalSeconds);
-    }
-    */
    
 });
