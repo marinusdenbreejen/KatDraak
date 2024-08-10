@@ -12,9 +12,7 @@
 </head>
 <body>
     <div class="status">
-       
-
-        {% if show != 'pieter' %}
+        {% if show|lower != 'pieter' %}
         <div class="florentine">
             <div class="label">Florentine</div>
             <div class="container" id="angryCatsContainer"></div>
@@ -23,7 +21,7 @@
         </div>
         {% endif %}
 
-        {% if show != 'florentine' %}
+        {% if show|lower != 'florentine' %}
         <div class="pieter">
             <div class="label">Pieter</div>
             <div class="container" id="angryDogsContainer"></div>
@@ -32,7 +30,5 @@
         </div>
         {% endif %}
     </div>
-
-   
 </body>
 </html>
