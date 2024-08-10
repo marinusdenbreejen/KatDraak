@@ -44,13 +44,16 @@ values = {
 
 # Load existing values from file if it exists
 if os.path.exists('counters.json'):
-    with open('counters.json', 'r') as f:
-        values.update(json.load(f))
+    try:
+        with open('counters.json', 'r') as f:
+            if os.stat('counters.json').st_size != 0:  # Check if file is not empty
+                values.update(json.load(f))
+            else:
+                print("counters.json is empty, starting with default values.")
+    except json.JSONDecodeError:
+        print("Error decoding JSON, starting with default values.")
 
-# Start the reset thread
-reset_thread = threading.Thread(target=reset_values)
-reset_thread.daemon = True  # Make the thread a daemon thread
-reset_thread.start()
+
 
 
 #reset angry cat and dog values every day at 18:00
@@ -66,7 +69,10 @@ def reset_values():
         else:
             tm.sleep(60)  # Check every minute
 
-
+# Start the reset thread
+reset_thread = threading.Thread(target=reset_values)
+reset_thread.daemon = True  # Make the thread a daemon thread
+reset_thread.start()
 
 ########################################################################################
 #   Timer functionality

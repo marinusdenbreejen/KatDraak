@@ -17,6 +17,7 @@
 - Install requirements: pip install -r requirements.txt 
 - nieuwe versie: git pull
 - restart server: sudo systemctl restart kathond.service
+- accessable via internet: ngrok http http://localhost:8080
 
 
 
