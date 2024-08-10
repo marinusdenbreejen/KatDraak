@@ -95,6 +95,10 @@ function updateImages(containerId, startImageUrl, imageUrl, count,animal) {
 
     function updateImages(containerId, startImageUrl, imageUrl, count, animal) {
         const container = document.getElementById(containerId);
+        if (!container) {
+            return; // Exit the function if the container does not exist
+        }
+
         container.innerHTML = ''; // Clear existing images
         
         // Create and append the start image

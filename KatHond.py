@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 import os
 import json
 from WakeUpIPAD import send_notification  # Import the send_notification function
+from flask_cors import CORS
 
 # Load environment variables from .env file
 load_dotenv()
@@ -208,6 +209,16 @@ def handle_refresh_all_clients():
 def display():
     return render_template('display.html')
 
+
+@app.route('/status')
+def status():
+    show = request.args.get('show')
+    return render_template('status.html', show=show)
+
+
+
+
+
 @app.route('/timer')
 def timer():
     return render_template('timeTimer.html')
@@ -241,4 +252,6 @@ if __name__ == '__main__':
     host_ip = socket.gethostbyname(hostname)
     logging.info(f"Host IP address: {host_ip}")
     logging.info("Starting the Flask-SocketIO server")
+    #CORS(app, resources={r"/*": {"origins": "http://192.168.178.30:8000"}})
+    #CORS(app, resources={r"/*": {"origins": "*"}})
     socketio.run(app, host='0.0.0.0', port=8080)

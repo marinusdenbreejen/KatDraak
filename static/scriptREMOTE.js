@@ -2,7 +2,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     // Initialize a WebSocket connection
-    const socket = io.connect('http//pi:8080');
+    //const socket = io.connect('http//pi:8080');
+    const socket = io.connect(location.protocol + '//' + document.domain + ':8080');
     socket.emit('request_status');
     
     // Request the current status from the server as soon as the connection is established
