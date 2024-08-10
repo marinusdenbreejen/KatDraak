@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function drawClockPositions(numberOfPositions, totalSeconds) {
   
         const timeIntervals = Array.from({length: numberOfPositions}, (_, i) => totalSeconds - (totalSeconds / numberOfPositions) * i);
-        ctx.font = '26px Arial';
+        ctx.font = '40px Arial';
         ctx.fillStyle = 'black';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const seconds = (totalSeconds - pastSeconds) % 60;
         const timeString = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
     
-        ctx.font = '40px Arial'; // Set the font size and face
+        ctx.font = '60px Arial'; // Set the font size and face
         ctx.fillStyle = 'black'; // Set the text color
         ctx.textAlign = 'right'; // Align text to the right
         ctx.textBaseline = 'top'; // Align text to the top

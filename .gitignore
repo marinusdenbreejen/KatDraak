@@ -1,4 +1,5 @@
 .env
+counters.json
 venv/
 venv/lib/python3.12/site-packages/dns/__init__.py
 venv/lib/python3.12/site-packages/dns/_compat.py

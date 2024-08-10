@@ -47,13 +47,7 @@ if os.path.exists('counters.json'):
     with open('counters.json', 'r') as f:
         values.update(json.load(f))
 
-# Start the reset thread
-reset_thread = threading.Thread(target=reset_values)
-reset_thread.daemon = True  # Make the thread a daemon thread
-reset_thread.start()
 
-
-#reset angry cat and dog values every day at 18:00
 def reset_values():
     logging.info("Reset thread started")
     while True:
@@ -66,7 +60,10 @@ def reset_values():
         else:
             tm.sleep(60)  # Check every minute
 
-
+# Start the reset thread
+reset_thread = threading.Thread(target=reset_values)
+reset_thread.daemon = True  # Make the thread a daemon thread
+reset_thread.start()
 
 ########################################################################################
 #   Timer functionality
